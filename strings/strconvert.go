@@ -15,7 +15,7 @@ import (
 )
 
 //CamelToSnake to convert string or []string to snake
-func CamelToSnake(i interface{}) (interface{}, error){
+func CamelToSnake(i interface{}) (interface{}, error) {
 	v := reflect.ValueOf(i)
 	switch v.Kind() {
 	case reflect.String:
@@ -23,7 +23,7 @@ func CamelToSnake(i interface{}) (interface{}, error){
 		return s, nil
 	case reflect.Slice:
 		var out []string
-		for idx :=0; idx < v.Len(); idx++ {
+		for idx := 0; idx < v.Len(); idx++ {
 			s := doConvert(v.Index(idx).Interface().(string))
 			out = append(out, s)
 		}
@@ -45,7 +45,7 @@ func doConvert(s string) string {
 		}
 		return false
 	}
-	for i, v := range s{
+	for i, v := range s {
 		if canConvert(i) {
 			out = append(out, '_')
 		}
