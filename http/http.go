@@ -42,11 +42,11 @@ func DoReq(method, url, contentType string, params url.Values, client *http.Clie
 	return resp.StatusCode, body, nil
 }
 
-func Get(url string, params url.Values, client *http.Client) (int, []byte, error) {
+func WGet(url string, params url.Values, client *http.Client) (int, []byte, error) {
 	return DoReq("GET", url, "", params, client, nil)
 }
 
-func Post(url string, params url.Values, contentType string, body []byte, client *http.Client) (int, []byte, error) {
+func WPost(url string, params url.Values, contentType string, body []byte, client *http.Client) (int, []byte, error) {
 	if contentType == "" {
 		contentType = "application/x-www-form-urlencoded"
 	}
@@ -65,7 +65,7 @@ func Post(url string, params url.Values, contentType string, body []byte, client
 	//return resp.StatusCode, respBody, nil
 }
 
-func PostForm(url string, forms url.Values) (int, []byte, error) {
+func WPostForm(url string, forms url.Values) (int, []byte, error) {
 	contentType := "application/x-www-form-urlencoded"
 	reqData := strings.NewReader(forms.Encode())
 
