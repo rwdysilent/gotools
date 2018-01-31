@@ -14,8 +14,12 @@ import (
 	"strings"
 )
 
-var defaultClient = &http.Client{}
+var (
+	defaultClient = &http.Client{}
+	defaultType   = "application/x-www-form-urlencoded",
+)
 
+//DoReq to request the url
 func DoReq(method, url, contentType string, params url.Values, client *http.Client, repBody io.Reader) (
 	int, []byte, error) {
 	if client != nil {
@@ -42,44 +46,21 @@ func DoReq(method, url, contentType string, params url.Values, client *http.Clie
 	return resp.StatusCode, body, nil
 }
 
+//WGet to get data
 func WGet(url string, params url.Values, client *http.Client) (int, []byte, error) {
 	return DoReq("GET", url, "", params, client, nil)
 }
 
-func WPost(url string, params url.Values, contentType string, body []byte, client *http.Client) (int, []byte, error) {
+//WPost to post data
+func WPost(url string, params url.Values, contentType string, body []byte, client *http.Client) (
+	int, []byte, error) {
 	if contentType == "" {
-		contentType = "application/x-www-form-urlencoded"
+		contentType = defaultType
 	}
-	reqBody := bytes.NewReader(body)
-	return DoReq("POST", url, contentType, params, client, reqBody)
-	//resp, err := http.Post(url, contentType, reqBody)
-	//if err != nil {
-	//	return 0, nil, err
-	//}
-	//defer resp.Body.Close()
-	//
-	//respBody, err := ioutil.ReadAll(resp.Body)
-	//if err != nil {
-	//	return resp.StatusCode, nil, err
-	//}
-	//return resp.StatusCode, respBody, nil
+	return DoReq("POST", url, contentType, params, client, bytes.NewReader(body))
 }
 
+//WPostForm to Post form data
 func WPostForm(url string, forms url.Values) (int, []byte, error) {
-	contentType := "application/x-www-form-urlencoded"
-	reqData := strings.NewReader(forms.Encode())
-
-	return DoReq("POST", url, contentType, nil, nil, reqData)
-	//resp, err := defaultClient.PostForm(url, forms)
-	//if err != nil {
-	//	return 0, nil, err
-	//}
-	//defer resp.Body.Close()
-	//
-	//body, err := ioutil.ReadAll(resp.Body)
-	//if err != nil {
-	//	return resp.StatusCode, nil, err
-	//}
-	//
-	//return resp.StatusCode, body, nil
+	return DoReq("POST", url, defaultType, nil, nil, strings.NewReader(forms.Encode()))
 }
