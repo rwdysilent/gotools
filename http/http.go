@@ -58,6 +58,20 @@ func Post(url string, params url.Values, contentType string, body []byte, client
 	return resp.StatusCode, respBody, nil
 }
 
-func PostForm() {
+func PostForm(url string, params, forms url.Values) (int, []byte, error){
+	if params != nil {
+		url += "?" + params.Encode()
+	}
+	resp, err := Client.PostForm(url, forms)
+	if err != nil {
+		return 0, nil, err
+	}
+	defer resp.Body.Close()
 
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return resp.StatusCode, nil, err
+	}
+
+	return resp.StatusCode, body, nil
 }
