@@ -16,7 +16,7 @@ import (
 
 var (
 	defaultClient = &http.Client{}
-	defaultType   = "application/x-www-form-urlencoded",
+	defaultType   = "application/x-www-form-urlencoded"
 )
 
 //DoReq to request the url
