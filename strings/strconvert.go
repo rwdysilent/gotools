@@ -51,5 +51,5 @@ func doConvert(s string) string {
 		}
 		out = append(out, v)
 	}
-	return string(out)
+	return strings.ToLower(string(out))
 }
