@@ -3,7 +3,7 @@
 // @Author: wupengfei@sogou-inc.com
 // @Date: 2018-01-30 19:09
 
-package http
+package whttp
 
 import (
 	"net/http"
