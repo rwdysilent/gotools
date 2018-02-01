@@ -6,25 +6,27 @@
 package whttp
 
 import (
-	"net/http"
-	"io/ioutil"
-	"net/url"
 	"bytes"
 	"io"
+	"io/ioutil"
+	"net/http"
+	"net/url"
 	"strings"
 )
 
+type Client struct {
+	http.Client
+}
+
 var (
-	defaultClient = &http.Client{}
+	defaultClient = &Client{}
 	defaultType   = "application/x-www-form-urlencoded"
 )
 
 //DoReq to request the url
-func DoReq(method, url, contentType string, params url.Values, client *http.Client, repBody io.Reader) (
+func (c *Client) DoReq(method, url, contentType string, params url.Values, repBody io.Reader) (
 	int, []byte, error) {
-	if client != nil {
-		defaultClient = client
-	}
+
 	if params != nil {
 		url += "?" + params.Encode()
 	}
@@ -36,7 +38,7 @@ func DoReq(method, url, contentType string, params url.Values, client *http.Clie
 	if contentType != "" {
 		req.Header.Set("Content-Type", contentType)
 	}
-	resp, err := defaultClient.Do(req)
+	resp, err := c.Client.Do(req)
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return 0, nil, err
@@ -47,20 +49,31 @@ func DoReq(method, url, contentType string, params url.Values, client *http.Clie
 }
 
 //WGet to get data
-func WGet(url string, params url.Values, client *http.Client) (int, []byte, error) {
-	return DoReq("GET", url, "", params, client, nil)
+func WGet(url string, params url.Values) (int, []byte, error) {
+	return defaultClient.WGet(url, params)
+}
+
+func (c *Client) WGet(url string, params url.Values) (int, []byte, error) {
+	return c.DoReq("GET", url, "", params, nil)
 }
 
 //WPost to post data
-func WPost(url string, params url.Values, contentType string, body []byte, client *http.Client) (
-	int, []byte, error) {
+func WPost(url string, contentType string, body []byte) (int, []byte, error) {
+	return defaultClient.WPost(url, contentType, body)
+}
+
+func (c *Client) WPost(url string, contentType string, body []byte) (int, []byte, error) {
 	if contentType == "" {
 		contentType = defaultType
 	}
-	return DoReq("POST", url, contentType, params, client, bytes.NewReader(body))
+	return c.DoReq("POST", url, contentType, nil, bytes.NewReader(body))
 }
 
 //WPostForm to Post form data
 func WPostForm(url string, forms url.Values) (int, []byte, error) {
-	return DoReq("POST", url, defaultType, nil, nil, strings.NewReader(forms.Encode()))
+	return defaultClient.WPostForm(url, forms)
+}
+
+func (c *Client) WPostForm(url string, forms url.Values) (int, []byte, error) {
+	return c.DoReq("POST", url, defaultType, nil, strings.NewReader(forms.Encode()))
 }
