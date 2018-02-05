@@ -12,6 +12,8 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+
+	gs "github.com/rwdysilent/goutils/strings"
 )
 
 type Client struct {
@@ -37,9 +39,7 @@ func (c *Client) DoReq(method, url, contentType string, params url.Values, repBo
 	}
 
 	if c.Header != nil {
-		for k := range c.Header {
-			req.Header[k] = c.Header[k]
-		}
+		gs.MapMerge(req.Header, c.Header)
 	}
 
 	if contentType != "" {
