@@ -16,6 +16,7 @@ import (
 
 type Client struct {
 	http.Client
+	http.Header
 }
 
 var (
@@ -33,6 +34,12 @@ func (c *Client) DoReq(method, url, contentType string, params url.Values, repBo
 	req, err := http.NewRequest(method, url, repBody)
 	if err != nil {
 		return 0, nil, err
+	}
+
+	if c.Header != nil {
+		for k := range c.Header {
+			req.Header[k] = c.Header[k]
+		}
 	}
 
 	if contentType != "" {
