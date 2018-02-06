@@ -10,18 +10,28 @@ import (
 	"reflect"
 )
 
+// typeCmp to compare the tow map type and key, value type, must be the same
+func typeCmp(f1, f2 interface{}) bool {
+	t1, t2 := reflect.TypeOf(f1), reflect.TypeOf(f2)
+
+	return t1.Kind() != reflect.Map || t2.Kind() != reflect.Map ||
+		t1.Key() != t2.Key() || t1.Elem() != t2.Elem()
+}
+
 // MapMerge to merge mapB to mapA
 func MapMerge(mapA, mapB interface{}) {
-	a, b := reflect.ValueOf(mapA), reflect.ValueOf(mapB)
-	if a.Kind() != reflect.Map || b.Kind() != reflect.Map {
-		log.Printf("type not map %s:%s, %s:%s", mapA, a.Kind(), mapB, b.Kind())
+	va, vb := reflect.ValueOf(mapA), reflect.ValueOf(mapB)
+
+	if typeCmp(mapA, mapB) {
+		log.Printf("type %v and type %v must be the same map", va.Type(), vb.Type())
 		return
 	}
-	switch b.Kind() {
+
+	switch vb.Kind() {
 	case reflect.Map:
-		if b.MapKeys() != nil {
-			for _, v := range b.MapKeys() {
-				a.SetMapIndex(v, b.MapIndex(v))
+		if vb.MapKeys() != nil {
+			for _, v := range vb.MapKeys() {
+				va.SetMapIndex(v, vb.MapIndex(v))
 			}
 		}
 	default:
