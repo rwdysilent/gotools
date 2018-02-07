@@ -23,7 +23,7 @@ func MapMerge(mapA, mapB interface{}) {
 	va, vb := reflect.ValueOf(mapA), reflect.ValueOf(mapB)
 
 	if typeCmp(mapA, mapB) {
-		log.Printf("type %v and type %v must be the same map", va.Type(), vb.Type())
+		log.Printf("can not merge different map type: %v, %v", va.Type(), vb.Type())
 		return
 	}
 
