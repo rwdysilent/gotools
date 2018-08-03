@@ -45,12 +45,17 @@ func (c *Client) DoReq(method, url, contentType string, params url.Values, repBo
 	if contentType != "" {
 		req.Header.Set("Content-Type", contentType)
 	}
+
 	resp, err := c.Client.Do(req)
-	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return 0, nil, err
 	}
 	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return 0, nil, err
+	}
 
 	return resp.StatusCode, body, nil
 }
