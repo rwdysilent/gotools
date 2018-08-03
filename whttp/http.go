@@ -48,13 +48,13 @@ func (c *Client) DoReq(method, url, contentType string, params url.Values, repBo
 
 	resp, err := c.Client.Do(req)
 	if err != nil {
-		return 0, nil, err
+		return resp.StatusCode, nil, err
 	}
 	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return 0, nil, err
+		return resp.StatusCode, nil, err
 	}
 
 	return resp.StatusCode, body, nil
